@@ -2,7 +2,7 @@ import requests
 
 def download(url):
     res = requests.get(url)
-    if res.status_code == 404
+    if res.status_code == 404:
         print("Not Found.")
         return
     filename = url.split('/')[-1]
