@@ -1,14 +1,13 @@
-import os
-def view_dir(path):
-    """
-    This function prints all files and directories in the given directory.
-    :args path: Path to the directory, default is current directory
-    """
-    names = os.listdir(path)
-    names.sort()
-    for name in names:
-        print(name, end =' ')
+import threading, multiprocessing
 
-if __name__ == '__main':
-    view_dir('/')
 
+def loop():
+    x = 0
+    while True:
+        x = x ^ 1
+
+
+if __name__ == '__main__':
+    for i in range(multiprocessing.cpu_count()):
+        t = threading.Thread(target=loop)
+        t.start()
