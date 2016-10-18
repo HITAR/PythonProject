@@ -1,5 +1,4 @@
 from urllib import request
-import os
 
 #请求
 
