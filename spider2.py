@@ -2,7 +2,7 @@ from urllib import request
 import os
 import re
 
-target_path = "E:\photos3"
+target_path = "E:\photos5"
 def savefile(path):
     if not os.path.isdir(target_path):
         os.mkdir(target_path)
@@ -20,7 +20,7 @@ if __name__ == '__main__':
                             'Chrome/49.0.2623.75 Safari/537.36'}
     req = request.Request(url, headers=header)
 
-    with request.urlopen(url) as res:
+    with request.urlopen(req) as res:
         data = res.read()
     s = set(re.findall(r'(https:[\S]*?(jpg|png|gif))', str(data)))  #re.findall()返回一个list
     print(s)
