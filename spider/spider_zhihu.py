@@ -62,8 +62,8 @@ if __name__ == '__main__':
 
     opener = getopener(headers)
     url+='/login/email'
-    eml='****************'
-    passwd='*********'
+    eml='*'
+    passwd='*'
 
     postdict = {
         '_xsrf':_xsrf,
