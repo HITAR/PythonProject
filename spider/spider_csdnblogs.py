@@ -1,9 +1,8 @@
 '''
 program: csdn博客爬虫
 function: 实现对csdn主页所有博文的日期、主题、访问量、评论个数信息爬取
-
 version: python 3.5.2
-time: 2016/10/24
+time: 2016/10/24-26
 copyright: ar
 '''
 
@@ -11,7 +10,6 @@ from urllib import request
 import os
 import re
 import gzip
-import time
 
 
 target_path = "E:\papers"
@@ -22,18 +20,18 @@ def savefile(data,i):
     path = os.path.join(target_path, path)
     file = open(path,'wb')
     page = '当前页：'+str(i+1)+'\n'
-    file.write(page.encode('gbk'))
+    file.write(page.encode(encoding='gb18030'))
     #将博文信息写入文件(以utf-8保存的文件声明为gbk)
     for d in data:
         d = str(d)+'\n'
-        file.write(d.encode('gbk'))
+        file.write(d.encode(encoding='gb18030'))
     file.close()
 
 def ungzip(data):
     try:
-        print("decompress...")
+    #    print("decompress...")
         data = gzip.decompress(data)
-        print("decompress finished.")
+    #    print("decompress finished.")
     except:
         print("no need to decompress")
     return data
@@ -44,6 +42,7 @@ class CSDNSpider:
         self.pageidx = pageidx
        # self.url = url[0:url.rindex('/')+1]+str(pageidx)
         self.url = url[0:url.rfind('/') + 1] + str(pageidx)
+        # print(self.url)
         self.headers = {
             'Host': 'blog.csdn.net',
             'Connection': 'keep-alive',
@@ -59,8 +58,9 @@ class CSDNSpider:
     def getpage(self):
         req = request.Request(url=self.url, headers=self.headers)
         with request.urlopen(req) as res:
-            data = ungzip(res.read())
-        data = data.decode('utf-8')
+            data = res.read()
+            data = ungzip(data)
+        data = data.decode('utf-8','ignore')
         pages = r'<div.*?pagelist">.*?<span>.*?共(.*)?页</span>'
 
         #先看看这样行不行
@@ -71,39 +71,48 @@ class CSDNSpider:
 
     def setpage(self,idx):
         #self.url = self.url[0:self.url.rindex('/')+1]+str(idx)
-        self.url = self.url[0:self.url.rfind('/')+1]+str(idx)
+        self.url = self.url[0:self.url.rfind('/')+1]+str(idx+1)
+        # print(self.url)
 
     def readdata(self):
         ret = []
-        patn = r'<span.*?link_title"><a href="(.*)?">' \
-            r'(.*)?</a></span>' \
-            r'.*?<span.*?link_postdate">(.*)?</span>' \
-            r'<span.*?link_view".*?>阅读</a>(.*)?</span>' \
-            r'<span.*?link_comments".*?>评论</a>(.*)?</span>'
+        strs = r'<span.*?link_title"><a href="(.*?)">' +\
+            r'(.*?)</a></span>' +\
+            r'.*?<span.*?link_postdate">(.*?)</span>' +\
+            r'.*?<span.*?link_view".*?>阅读</a>\((.*?)\)</span>' +\
+            r'.*?<span.*?link_comments".*?>评论</a>\((.*?)\)</span>'
         req = request.Request(url=self.url,headers=self.headers)
         with request.urlopen(req) as res:
-            data = ungzip(res.read())
-        data = data.decode('utf-8')
-        pattern = re.compile(patn, re.DOTALL)
-        items = re.findall(pattern, str(data))
-        print(items)
+            data = res.read()
+            data = ungzip(data)
+            data = data.decode('utf-8', 'ignore')
 
-       items = re.findall(re.compile(patn), str(data))
+        pattern = re.compile(strs, re.DOTALL)
+        items = re.findall(pattern, str(data))
+        # if re.match(pattern,str(data)):
+        #     print("ok")
+        # else:
+        #     print('failed')
+       # print(items)
+
+
         for item in items:
-            ret.append('标题'+item[1]+'\t链接：http://blog.csdn.net'+item[0]
-                       +'\n'+'发表日期'+item[2]
-                       +'\n'+'阅读：'+item[3]+'\t评论：'+item[4]+'\n')
-        print(1)
+            res = re.split(r'\s+',item[1])
+            res = ''.join(str(e) for e in res)
+            ret.append('\n标题:'+res+'\t链接：http://blog.csdn.net'+item[0]
+                       +'\n发表日期：'+item[2]
+                       +'\n阅读：'+item[3]+'\t评论：'+item[4]+'\n')
+
         return ret
 
 
 
 cs = CSDNSpider()
 pages = int(cs.getpage())
-print("博文总页数： ", pages)
+print("博文总页数:%d" % pages)
 for idx in range(pages):
      cs.setpage(idx)
-     print("当前页：",idx+1)
+     print("当前页：%d" % (idx+1))
      #读取当前页的所有博文，结果为list类型
      papers = cs.readdata()
      savefile(papers,idx)
