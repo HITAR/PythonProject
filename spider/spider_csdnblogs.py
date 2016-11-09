@@ -70,8 +70,8 @@ class CSDNSpider:
         return pagenum
 
     def setpage(self,idx):
-        #self.url = self.url[0:self.url.rindex('/')+1]+str(idx)
-        self.url = self.url[0:self.url.rfind('/')+1]+str(idx+1)
+        self.url = self.url[0:self.url.rindex('/')+1]+str(idx)
+        #self.url = self.url[0:self.url.rfind('/')+1]+str(idx+1)
         # print(self.url)
 
     def readdata(self):
@@ -93,7 +93,7 @@ class CSDNSpider:
         #     print("ok")
         # else:
         #     print('failed')
-       # print(items)
+        #print(items)
 
 
         for item in items:
