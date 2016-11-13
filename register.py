@@ -98,20 +98,3 @@ if __name__ == '__main__':
     app.master.title('Register Operation')
     # 主消息循环:
     app.mainloop()
-
-    # key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,r"Software\Microsoft\Windows\CurrentVersion\Explorer",0,winreg.KEY_ALL_ACCESS)
-    # newKeyName = "123"
-    # newKey = winreg.CreateKeyEx(key,newKeyName,0,winreg.KEY_ALL_ACCESS)
-    #
-    # #给新创建的键添加键值
-    # value = input("please input key's value:")
-    # value_type = input("please input value's type:")
-    # #if value_type == winreg.REG_BINARY
-    #
-    # winreg.SetValue(key,newKeyName,type,value_type)
-    #
-    # #winreg.DeleteKeyEx(key, "MyNewKey",winreg.REG_SZ,0)
-    # a = winreg.QueryValue(key,newKeyName)
-    # print(a)
-
-    #winreg.DeleteValue(key,"123")
