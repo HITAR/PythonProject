@@ -4,8 +4,6 @@ import random
 from multiprocessing import Queue
 
 idle = threading.Semaphore(value=2)
-# busy = threading.Semaphore(value=0)
-# sem = threading.Semaphore(value=1)
 
 
 def producer(q):
